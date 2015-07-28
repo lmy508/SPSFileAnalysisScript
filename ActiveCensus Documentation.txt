@@ -1,0 +1,125 @@
+/* The following steps explain how to create Weekly Active Census table and populate it. 
+   All the scripts here are saved in the folder 'mingyu'. */
+   
+1. Create table Mingyu_ActiveCensusRaw, execute the following script:
+	CREATE TABLE Mingyu_ctiveCensusRaw
+		( [CensusDate] varchar(255) 
+      ,[DistributorID] varchar(255)
+      ,[patientID] varchar(255)
+      ,[UT Patient ID] varchar(255)
+      ,[Start Date] date
+      ,[PrescriberID] varchar(255)
+      ,[UTProduct] varchar(255)
+      ,[PayerType] varchar(255)
+	);
+
+2. Import daily raw active census SPS xlsx files into [MingyuDB1].[dbo].[Mingyu_ActiveCensusRaw]
+	Using mport/Export wizard.
+	Some columns need to be mapped manually when loading data. 
+	
+3. Create table WeeklyActiveCensus, execute the following script:
+	CREATE TABLE Mingyu_WeeklySPSActiveCensusToBePopulated
+		( [ACTIVE_COMMERCIAL__c] varchar(255)
+      ,[ACTIVE_PAP__c] varchar(255)
+      ,[ACTIVE_CAP__C] varchar(255)
+      ,[LATEST_MONTH__c] varchar(255)
+      ,[MONTH_ENDING_DATE__c] date
+      ,[PRESCRIBER_LOOKUP__c] varchar(255)
+      ,[PRODUCT__c] varchar(255)
+      ,[SPS__c] varchar(255)
+      ,[SPS_PRESCRIBER_ID__c] varchar(255)
+      ,[UTCI_DATA_SOURCE__c] varchar(255)
+      ,[PATIENT_ID__c] varchar(255)
+      ,[UTPATIENTID__c] varchar(255)
+      ,[START_DATE__c] varchar(255)
+      ,[BEAT_STUDY_FLAG__c] varchar(255) 
+	);
+
+4. Import data from [MingyuDB1].[dbo].[Mingyu_ActiveCensusRaw] 
+	to [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	
+	Execute this code insertActiveCensus.sql: 
+	
+	USE MingyuDB1
+	INSERT INTO [dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+		([PRODUCT__c]
+		,[SPS_PRESCRIBER_ID__c]
+		,[SPS__c]
+		,[PATIENT_ID__c]
+		,[UTPATIENTID__c]
+		,[START_DATE__c]) 
+	SELECT [UTProduct]
+		,[PrescriberID]
+		,[DistributorID]
+		,[patientID]
+		,[UT Patient ID]
+		,[Start Date] 
+	FROM [dbo].[Mingyu_ActiveCensusRaw]
+
+5. Fill the ACTIVE_COMMERCIAL__c, ACTIVE_PAP__c, and ACTIVE_CAP__c columns 
+   
+   Execute this script updatePayerType.sql:
+
+  update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '1', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Orenitram' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Orenitram' and PayerType = 'Commercial')
+  
+  update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '1', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Remodulin IV' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Remodulin IV' and PayerType = 'Commercial')	
+
+  update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '1', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Remodulin SC' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Remodulin SC' and PayerType = 'Commercial')
+
+  update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '1', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c LIKE 'Tyvaso%' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct LIKE 'Tyvaso%' and PayerType = 'Commercial')
+
+  update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '1',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Orenitram' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Orenitram' and PayerType = 'PAP')
+
+  update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '1',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Remodulin IV' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Remodulin IV' and PayerType = 'PAP')
+
+   update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '1',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Remodulin SC' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Remodulin SC' and PayerType = 'PAP')
+
+   update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '1',ACTIVE_CAP__C = '0'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c LIKE 'Tyvaso%' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct like  'Tyvaso%' and PayerType = 'PAP')
+
+   
+   update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '1'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Orenitram' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Orenitram' and PayerType = 'CAP')
+
+
+   update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '1'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Remodulin IV' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Remodulin IV' and PayerType = 'CAP')
+	
+   update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '1'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c =  'Remodulin SC' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct =  'Remodulin SC' and PayerType = 'CAP')
+
+   update [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+    set  ACTIVE_COMMERCIAL__c = '0', ACTIVE_PAP__c = '0',ACTIVE_CAP__C = '1'
+	from [MingyuDB1].[dbo].[Mingyu_WeeklySPSActiveCensusToBePopulated] 
+	where PRODUCT__c LIKE  'Tyvaso&' and PATIENT_ID__c in (select patientID from [MingyuDB1].[dbo].[Mingyu_ActiveCesusRaw] where UTProduct LIKE  'Tyvaso%' and PayerType = 'CAP')
+
+	

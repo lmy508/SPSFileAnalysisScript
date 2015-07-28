@@ -1,0 +1,112 @@
+/* The following steps explain how to create Weekly shipments table and populate it. 
+   All the sql scripts here are saved in the folder 'mingyu'. */
+
+1. Create table Mingyu_ShipmentsRaw, execute the following script:
+	CREATE TABLE Mingyu_ShipmentsRaw
+		( [DistributorID] varchar(255)
+      ,[DistributorShipmentID] varchar(255)
+      ,[PatientID] varchar(255)
+      ,[UTPaitentID] varchar(255)
+      ,[PatientState] varchar(255)
+      ,[ShipDate] datetime
+      ,[UTProductUnitID] varchar(255)
+      ,[QtyShipped] varchar(255)
+      ,[PrsecriberID] varchar(255)
+      ,[ConMeds.OtherPATherapy] varchar(255)
+      ,[Dose] varchar(255)
+      ,[DoseUnit] varchar(255)
+      ,[DeviceID] varchar(255)
+      ,[studyPatient] varchar(255)
+      ,[study] varchar(255)
+      ,[PayorName] varchar(255)
+	);
+
+2. Import daily raw Shipments SPS xlsx files into [MingyuDB1].[dbo].[Mingyu_ShipmentsRaw]
+	Using mport/Export wizard.
+	Some columns need to be mapped manually when loading data. 
+	
+3. Create table WeeklyShipments, execute the following script:
+	CREATE TABLE Mingyu_WeeklySPSShipmentsToBePopulated
+		( [Id] varchar(255)
+      ,[IsDeleted] varchar(255)
+      ,[Name] varchar(255)
+      ,[CreatedDate] varchar(255)
+      ,[CreatedById] varchar(255)
+      ,[LastModifiedDate] varchar(255)
+      ,[LastModifiedById] varchar(255)
+      ,[SystemModstamp] varchar(255)
+      ,[MayEdit] varchar(255)
+      ,[IsLocked] varchar(255)
+      ,[PRESCRIBER_LOOKUP__c] varchar(255)
+      ,[product__c] varchar(255)
+      ,[PATIENT_ID__c] varchar(255)
+      ,[data_source__c] varchar(255)
+      ,[SPS_SHIPMENT_ID__c] varchar(255)
+      ,[DOSE_UNIT__c] varchar(255)
+      ,[SPS_PATIENT_ZIP__c] varchar(255)
+      ,[SPS_PRESCRIBER_ID__c] varchar(255)
+      ,[SHIPMENT_ID__c] varchar(255)
+      ,[STUDY_PATIENT__c] varchar(255)
+      ,[STUDY_TYPE__c] varchar(255)
+      ,[UT_PRODUCT_UNIT_ID__c] varchar(255)
+      ,[ConMeds_OtherPAHTherapy__c] varchar(255)
+      ,[DOSE__c] varchar(255)
+      ,[QUANTITY_SHIPPED__c] varchar(255)
+      ,[SHIP_DATE__c] varchar(255)
+      ,[SPS__c] varchar(255)
+      ,[Date_Loaded__c] varchar(255)
+      ,[FREQUENCY__c] varchar(255)
+      ,[Amount_Drug_Shipped__c] varchar(255)
+      ,[UT_SALES_ALIGNMENT__c] varchar(255)
+      ,[UTPatientID__c] varchar(255)
+      ,[SPS_PATIENT_STATE__c] varchar(255)
+      ,[SPS_PAYOR_NAME__c] varchar(255)
+      ,[DEVICEID__c] varchar(255)
+      ,[TOTAL_DAILY_DOSE__c] varchar(255)
+      ,[MONTHS_ON_THERAPY__c] varchar(255)
+	);
+
+4. Import data from [MingyuDB1].[dbo].[Mingyu_ShipmentsRaw] 
+	to [MingyuDB1].[dbo].[Mingyu_WeeklySPSShipmentsToBePopulated] 
+	
+	Execute this code insertShipments.sql: 
+					
+	use MingyuDB1
+	INSERT INTO [dbo].[Mingyu_WeeklySPSShipmentsToBePopulated] 
+		([SPS__c]
+		,[SPS_SHIPMENT_ID__c]
+		,[PATIENT_ID__c]
+		,[UTPATIENTID__C]
+		,[SPS_PATIENT_STATE__c]
+		,[SHIP_DATE__c]
+		,[UT_PRODUCT_UNIT_ID__c]
+		,[QUANTITY_SHIPPED__c]
+		,[SPS_PRESCRIBER_ID__c]
+		,[ConMeds_OtherPAHTherapy__c]
+		,[DOSE__c]
+		,[DOSE_UNIT__c]
+		,[DEVICEID__c]
+		,[STUDY_PATIENT__c]
+		,[STUDY_TYPE__c]
+		,[SPS_PAYOR_NAME__c]) 
+	SELECT [DistributorID]
+      ,[DistributorShipmentID]
+      ,[PatientID]
+      ,[UTPaitentID]
+      ,[PatientState]
+      ,[ShipDate]
+      ,[UTProductUnitID]
+      ,[QtyShipped]
+      ,[PrsecriberID]
+      ,[ConMeds.OtherPATherapy]
+      ,[Dose]
+      ,[DoseUnit]
+      ,[DeviceID]
+      ,[studyPatient]
+      ,[study]
+      ,[PayorName]
+	FROM [dbo].[Mingyu_ShipmentsRaw]
+	
+
+
+	

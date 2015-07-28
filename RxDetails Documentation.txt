@@ -1,0 +1,106 @@
+/* The following steps explain how to create Weekly Rx Details table and populate it. 
+   All the scripts here are saved in the folder 'mingyu'. */
+
+1. Create table Mingyu_RxDetailsRaw, execute the following script:
+	CREATE TABLE Mingyu_RxDetailsRaw
+		( [DistributorID] varchar(255)
+      ,[PatientID] varchar(255)
+      ,[UTPatientID] varchar(255)
+      ,[ActivityDate] datetime
+      ,[Category] varchar(255)
+      ,[Details] varchar(255)
+      ,[UTProductID] varchar(255)
+      ,[PrecriberID] varchar(255)
+      ,[Dose] varchar(255)
+      ,[DoseUnit] varchar(255)
+      ,[DeviceID] varchar(255)
+      ,[StudyPatient] varchar(255)
+      ,[StudyName] varchar(255)
+	);
+
+2. Import daily raw Rx Details SPS xlsx files into [MingyuDB1].[dbo].[Mingyu_RxDetailsRaw]
+	Using mport/Export wizard.
+	Some columns need to be mapped manually when loading data. 
+	
+3. Create table WeeklyRxDetail, execute the following script:
+	CREATE TABLE Mingyu_WeeklySPSRxDetailToBePopulated
+		( [ACTIVITY_DATE__c] date
+      ,[CATEGORY__c] varchar(255)
+      ,[CATEGORY_ORIGINAL__c] varchar(255)
+      ,[CATEGORY_GROUP__c] varchar(255)
+      ,[CLEAN_REFERRAL__c] varchar(255)
+      ,[DETAILS__c] varchar(255)
+      ,[DETAILS_ORIGINAL__c] varchar(255)
+      ,[DEVICE__c] varchar(255) 
+      ,[DISABLED__c] varchar(255)
+      ,[DOSE__c] varchar(255)
+      ,[DOSE_UNIT__c] varchar(255)
+      ,[FALSE_START_DC_CODE__c] varchar(255)
+      ,[NEW_WRITER_REM__c] varchar(255)
+      ,[NEW_WRITER_TYV__c] varchar(255)
+      ,[NEW_WRITER_UT__c] varchar(255)
+      ,[NOTES__c] varchar(255)
+      ,[NOTES_ORIGINAL__c] varchar(255)
+      ,[PATIENT_ID__c] varchar(255)
+      ,[PATIENT_PRODUCT_GROUP_SEQUENCE__c] varchar(255)
+      ,[PRESCRIBER_LOOKUP__c] varchar(255)
+      ,[PRODUCT__c] varchar(255)
+      ,[Product_Original__c] varchar(255)
+      ,[RAW_RECORD__c] varchar(255)
+      ,[SPS__c] varchar(255)
+      ,[SPS_CODE_ID__c] varchar(255)
+      ,[SPS_PRESCRIBER_ID__c] varchar(255)
+      ,[TRUE_START_DC__c] varchar(255)
+      ,[TYVASO_STUDY_PATIENT__c] varchar(255)
+      ,[UTGBI_DATA_SOURCE__c] varchar(255)
+      ,[New_Writer_ORE__C] varchar(255)
+      ,[UTPATIENTID__C] varchar(255)
+      ,[STUDY_PATIENT__C] varchar(255)
+      ,[STUDY_TYPE__C] varchar(255)
+      ,[TRUE_START_transition__c] varchar(255)
+      ,[Start_Transitions__c] varchar(255)
+      ,[ORE_IC_TYPE__c] varchar(255)
+      ,[Final_Study_patient__c] varchar(255)
+      ,[CreatedByid] varchar(255)
+      ,[createddate] varchar(255)
+      ,[lastmodifiedbyid] varchar(255)
+      ,[lastmodifieddate] varchar(255)
+      ,[patient_product_group_sequence_] varchar(255)
+	);
+
+4. Import data from [MingyuDB1].[dbo].[Mingyu_RxDetailsRaw] 
+	to [MingyuDB1].[dbo].[Mingyu_WeeklySPSRxDetailToBePopulated] 
+	
+	Execute this code insertRxDetails.sql: 
+
+	use MingyuDB1
+	INSERT INTO [dbo].[Mingyu_WeeklySPSRxDetailToBePopulated]
+		([SPS__c]
+		,[PATIENT_ID__c]
+		,[UTPATIENTID__C]
+		,[ACTIVITY_DATE__c]
+		,[CATEGORY_GROUP__c]
+		,[PRODUCT__c]
+		,[SPS_PRESCRIBER_ID__c]
+		,[DOSE__c]
+		,[DOSE_UNIT__c]
+		,[DEVICE__c]
+		,[STUDY_PATIENT__C]
+		,[STUDY_TYPE__C]) 
+	SELECT [DistributorID]
+      ,[PatientID]
+      ,[UTPatientID]
+      ,[ActivityDate]
+      ,[Category]
+      ,[UTProductID]
+      ,[PrecriberID]
+      ,[Dose]
+      ,[DoseUnit]
+      ,[DeviceID]
+      ,[StudyPatient]
+      ,[StudyName] 
+	FROM [dbo].[Mingyu_RxDetailsRaw]
+	
+
+
+	
