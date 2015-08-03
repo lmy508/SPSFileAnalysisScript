@@ -14,7 +14,7 @@
 	);
 
 2. Import daily raw active census SPS xlsx files into [MingyuDB1].[dbo].[Mingyu_ActiveCensusRaw]
-	Using mport/Export wizard.
+	Using import/Export wizard.
 	Some columns need to be mapped manually when loading data. 
 	
 3. Create table WeeklyActiveCensus, execute the following script:
