@@ -17,7 +17,7 @@
 	Using import/Export wizard.
 	Some columns need to be mapped manually when loading data. 
 	
-3. Create table WeeklyActiveCensus, execute the following script:
+3. Create table WeeklySPSActiveCensus, execute the following script:
 	CREATE TABLE Mingyu_WeeklySPSActiveCensusToBePopulated
 		( [ACTIVE_COMMERCIAL__c] varchar(255)
       ,[ACTIVE_PAP__c] varchar(255)

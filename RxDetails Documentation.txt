@@ -19,10 +19,10 @@
 	);
 
 2. Import daily raw Rx Details SPS xlsx files into [MingyuDB1].[dbo].[Mingyu_RxDetailsRaw]
-	Using mport/Export wizard.
+	Using import/Export wizard.
 	Some columns need to be mapped manually when loading data. 
 	
-3. Create table WeeklyRxDetail, execute the following script:
+3. Create table WeeklySPSRxDetail, execute the following script:
 	CREATE TABLE Mingyu_WeeklySPSRxDetailToBePopulated
 		( [ACTIVITY_DATE__c] date
       ,[CATEGORY__c] varchar(255)

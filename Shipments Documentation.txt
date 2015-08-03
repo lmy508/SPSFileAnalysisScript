@@ -22,10 +22,10 @@
 	);
 
 2. Import daily raw Shipments SPS xlsx files into [MingyuDB1].[dbo].[Mingyu_ShipmentsRaw]
-	Using mport/Export wizard.
+	Using Import/Export wizard.
 	Some columns need to be mapped manually when loading data. 
 	
-3. Create table WeeklyShipments, execute the following script:
+3. Create table WeeklySPSShipments, execute the following script:
 	CREATE TABLE Mingyu_WeeklySPSShipmentsToBePopulated
 		( [Id] varchar(255)
       ,[IsDeleted] varchar(255)
